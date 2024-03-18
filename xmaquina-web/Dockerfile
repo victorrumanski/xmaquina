@@ -1,5 +1,5 @@
 # First stage: build the application
-FROM maven:3.8.3-jdk-17 AS build
+FROM maven:3.8.3-openjdk-17 AS build
 COPY . /app
 WORKDIR /app
 RUN mvn package -DskipTests
