@@ -9,6 +9,7 @@ services:
     ports:
       - "9000:9000"
       - "9009:9009"
+      - "8812:8812"
     networks:
       - "iotstack"
   
@@ -53,8 +54,9 @@ services:
       - "iotstack"
 
   xmaquina:
-    container_name: xmaquina
     build: ../xmaquina-web
+    container_name: xmaquina
+    env_file: xmaquina.env
     #restart: always
     ports:
       - 8080
