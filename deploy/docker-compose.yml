@@ -31,7 +31,6 @@ services:
     container_name: telegraf
     env_file: questitto.env
     depends_on:
-      - mosquitto
       - questdb
     links:
       - questdb
