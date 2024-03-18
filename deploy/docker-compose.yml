@@ -53,8 +53,7 @@ services:
       - "iotstack"
 
   xmaquina-web:
-    container_name: xmaquina-web
-    image: xmaquina:latest
+    build: ../xmaquina-web
     restart: always
     ports:
       - 8080
