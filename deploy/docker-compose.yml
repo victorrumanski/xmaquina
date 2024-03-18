@@ -52,5 +52,16 @@ services:
     networks:
       - "iotstack"
 
+  xmaquina-web:
+    container_name: xmaquina-web
+    image: xmaquina:latest
+    restart: always
+    ports:
+      - 8080
+    depends_on:
+      - nginx
+    networks:
+      - "iotstack"
+
 networks:
   iotstack:
