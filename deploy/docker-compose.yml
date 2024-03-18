@@ -6,6 +6,7 @@ services:
     container_name: questdb
     volumes:
       - ./questdb/conf/server.conf:/var/lib/questdb/conf/server.conf
+      - ./questdb/data:/root/.questdb
     ports:
       - "9000:9000"
       - "9009:9009"
