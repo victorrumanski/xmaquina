@@ -31,7 +31,7 @@ services:
   telegraf:
     image: telegraf
     container_name: telegraf
-    env_file: questitto.env
+    env_file: telegraf.env
     depends_on:
       - questdb
     links:
