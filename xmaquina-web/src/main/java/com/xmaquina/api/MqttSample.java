@@ -9,8 +9,8 @@ import java.util.Random;
 public class MqttSample {
     public static void main(String[] args) throws InterruptedException {
         while (true) {
-            Thread.sleep(4000);
-            String broker = "tcp://xmaquina.xyz:1883";
+            Thread.sleep(5000);
+            String broker = "tcp://172.235.141.8:1883";
             String topic = "sensores";
             String content = "leituras,sensor_id=1 temperature=" + new Random().nextDouble(15, 19)
                     + " ";// + System.nanoTime();
@@ -19,7 +19,7 @@ public class MqttSample {
             String clientId = MqttClient.generateClientId();
             MemoryPersistence persistence = new MemoryPersistence();
             MqttConnectOptions connOpts = new MqttConnectOptions();
-            connOpts.setUserName("x");
+            connOpts.setUserName("pubclient");
             connOpts.setPassword("x".toCharArray());
             try {
                 MqttClient client = new MqttClient(broker, clientId, persistence);

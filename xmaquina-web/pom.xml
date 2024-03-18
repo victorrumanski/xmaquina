@@ -51,6 +51,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.questdb</groupId>
+			<artifactId>questdb</artifactId>
+			<version>6.5</version>
+		</dependency>
+		<dependency>
 			<groupId>org.eclipse.paho</groupId>
 			<artifactId>org.eclipse.paho.client.mqttv3</artifactId>
 			<version>1.2.5</version>
