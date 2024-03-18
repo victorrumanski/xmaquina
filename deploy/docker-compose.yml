@@ -30,10 +30,26 @@ services:
     image: telegraf
     container_name: telegraf
     env_file: questitto.env
+    depends_on:
+      - mosquitto
+      - questdb
     links:
       - questdb
     volumes:
       - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    networks:
+      - "iotstack"
+
+  nginx:
+    container_name: nginx
+    image: nginx:1.13
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - questdb
     networks:
       - "iotstack"
 
