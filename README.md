@@ -1,4 +1,4 @@
-# X-Maquina
+# X-Maquina - IoT full-stack application
 Sample IoT project using SpringBoot + MQTT + Telegraf + QuestDB + Nginx + Docker-Compose deployment
 ![mqtt](https://github.com/victorrumanski/xmaquina/assets/50980148/33c79f64-df56-40db-a640-27002186cea8)
 
