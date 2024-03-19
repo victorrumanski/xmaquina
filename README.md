@@ -9,17 +9,22 @@ Sample IOT project using MQTT + Telegraf + QuestDB + Docker
 
 ## After linode server is running
 1 - login as victor user
+
 2 - git clone this repo .
 
 1- change the passwords in this file /mosquitto/config/passwd
+
 2- run this cmd to encrypt the just changed passwords
 docker run -it --rm -v $(pwd)/mosquitto/config:/mosquitto/config eclipse-mosquitto mosquitto_passwd -U /mosquitto/config/passwd
 
 3- change the password for telegraf to login into mosquitto in telegraf.env file
+
 4- change the password for questdb jdbc login in questdb/conf/server.conf
+
 5- change the jdbc params to login into questdb from springboot in xmaquina.env file
 
 to check logs: `docker compose logs xmaquina`
+
 to get a shell inside a container: `docker exec -it xmaquina bash`
 
 
