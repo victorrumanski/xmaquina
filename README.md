@@ -27,4 +27,9 @@ to check logs: `docker compose logs xmaquina`
 
 to get a shell inside a container: `docker exec -it xmaquina bash`
 
+now you can access your IP address and check the dashboard screen
+
+![image](https://github.com/victorrumanski/xmaquina/assets/50980148/555c0bc8-fd0d-495d-abb5-d62846a338e9)
+
+
 
