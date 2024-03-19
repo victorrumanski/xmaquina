@@ -4,7 +4,9 @@ Sample IoT project using SpringBoot + MQTT + Telegraf + QuestDB + Nginx + Docker
 
 ## First steps
 1 - Create a linux server at Linode
+
 2 - Put your public key here deploy/docker-cloud-init.yaml on the line that says `my_ssh_public_key_here`
+
 3 - on User Data section paste the contents of deploy/docker-cloud-init.yaml, you should get a ubuntu server with docker installed and a non-root user called victor. 
 
 ## After linode server is running
