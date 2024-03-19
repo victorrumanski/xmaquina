@@ -5,7 +5,7 @@ services:
     image: questdb/questdb
     container_name: questdb
     volumes:
-      - ./questdb/conf/server.conf:/var/lib/questdb/conf/server.conf
+      - ./questdb/conf/server.conf:/root/.questdb/conf/server.conf
       - ./questdb/data/db:/root/.questdb/db
     ports:
       - "9000:9000"
@@ -18,7 +18,7 @@ services:
     image: eclipse-mosquitto
     container_name: mosquitto
     volumes:
-      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/config:/mosquitto/config:rw
       - ./mosquitto/data:/mosquitto/data
     ports:
       - "1883:1883"
