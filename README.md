@@ -1,5 +1,5 @@
 # X-Maquina
-Sample IOT project using MQTT + Telegraf + QuestDB + Docker
+Sample IoT project using SpringBoot + MQTT + Telegraf + QuestDB + Nginx + Docker-Compose deployment
 
 
 ## First steps
