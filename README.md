@@ -27,12 +27,22 @@ docker run -it --rm -v $(pwd)/mosquitto/config:/mosquitto/config eclipse-mosquit
 
 5- change the jdbc params to login into questdb from springboot in xmaquina.env file
 
+run the docker compose stack with `docker compose up -d`
+
 to check logs: `docker compose logs xmaquina`
 
 to get a shell inside a container: `docker exec -it xmaquina bash`
 
-now you can access your IP address and check the dashboard screen
+## Sending Data
+1 - The Dashboard will be empty at first. We can use MQTT Explorer app -> https://mqtt-explorer.com to send some data
 
+2 - Connect with `Protocol = mqtt://` and `Host = IP from linode server` and `Port=1883` and `username=pubclient` and `password=the pass at mosquitto.conf`
+
+3 - send a message to `topic = sensores` with raw data: `leituras,sensor_id=1 temperature=11.22 ` (do not remove the last whitespace!)
+
+4 - Now open browser to your IP from linode server and you should see your sensor data on the dashboard
+
+5 - Send another line of data with sensor_id=2 and check the dashboard again.
 
 
 
