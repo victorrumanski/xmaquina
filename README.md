@@ -12,7 +12,7 @@ Sample IoT project using SpringBoot + MQTT + Telegraf + QuestDB + Nginx + Docker
 3 - on User Data section paste the contents of deploy/docker-cloud-init.yaml, you should get a ubuntu server with docker installed and a non-root user called victor. 
 
 ## After linode server is running
-1 - login as victor user
+1 - login as victor user with the private key pair you pasted in cloud-init
 
 2 - git clone this repo .
 
