@@ -48,9 +48,10 @@ services:
     ports:
       - 80:80
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/xmaquina.conf
     depends_on:
       - questdb
+      - xmaquina
     networks:
       - "iotstack"
 
@@ -62,7 +63,7 @@ services:
     ports:
       - 8080:8080
     depends_on:
-      - nginx
+      - questdb
     networks:
       - "iotstack"
 
