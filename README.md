@@ -1,6 +1,10 @@
 # X-Maquina - IoT full-stack application
 Sample IoT project using SpringBoot + MQTT + Telegraf + QuestDB + Nginx + Docker-Compose deployment
+
+
 ![mqtt](https://github.com/victorrumanski/xmaquina/assets/50980148/33c79f64-df56-40db-a640-27002186cea8)
+
+
 
 ![image](https://github.com/victorrumanski/xmaquina/assets/50980148/555c0bc8-fd0d-495d-abb5-d62846a338e9)
 
@@ -40,7 +44,7 @@ to get a shell inside a container: `docker exec -it xmaquina bash`
 
 3 - send a message to `topic = sensores` with raw data: `leituras,sensor_id=1 temperature=11.22 ` (do not remove the last whitespace!)
 
-4 - Now open browser to your IP from linode server and you should see your sensor data on the dashboard
+4 - Now open browser to your `<IP>:8080` and you should see your sensor data on the dashboard
 
 5 - Send another line of data with sensor_id=2 and check the dashboard again.
 
