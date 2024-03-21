@@ -5,15 +5,22 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 
 public class SensorMapper implements RowMapper<Sensor> {
 
     @Override
     public Sensor mapRow(ResultSet rs, int i) throws SQLException {
-        Sensor employee = new Sensor();
-        employee.id = rs.getLong("sensor_id");
-        employee.ts = rs.getTimestamp("timestamp").toLocalDateTime();
-        employee.leitura = rs.getBigDecimal("temperature");
-        return employee;
+        Sensor sensor = new Sensor();
+        sensor.id = rs.getLong("sensor_id");
+        sensor.leitura = rs.getBigDecimal("temperature");
+        Date d = new Date(rs.getTimestamp("timestamp").getTime());
+        Instant instant = d.toInstant();
+        instant = instant.truncatedTo(ChronoUnit.SECONDS);
+        sensor.ts = instant.toEpochMilli();
+        sensor.date = rs.getTimestamp("timestamp").toLocalDateTime();
+        return sensor;
     }
 }

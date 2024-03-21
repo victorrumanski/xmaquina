@@ -2,7 +2,6 @@ package com.xmaquina.api.config;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
@@ -20,9 +19,5 @@ public class LatestSensorValue {
         instant = instant.truncatedTo(ChronoUnit.SECONDS);
         this.ts = instant.toEpochMilli();
         this.date = dt;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new Date(1710657572000l));
     }
 }

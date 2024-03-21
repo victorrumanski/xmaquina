@@ -1,4 +1,4 @@
-package com.xmaquina.api;
+package com.xmaquina.api.config.mqtt;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -14,7 +14,7 @@ public class SampleCallback implements MqttCallback {
     }
 
     public void deliveryComplete(IMqttDeliveryToken token) {
-        System.out.println("deliveryComplete");
+        //System.out.println("deliveryComplete");
     }
 
 

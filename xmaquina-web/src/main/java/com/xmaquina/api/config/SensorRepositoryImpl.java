@@ -6,8 +6,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
-import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 
 @Component
@@ -21,7 +22,7 @@ public class SensorRepositoryImpl implements SensorRepository {
 
     private final String SQL_FIND_ALL = "SELECT sensor_id,timestamp,temperature from leituras LATEST BY sensor_id order by sensor_id";
     private final String SQL_FIND_CURRENT_TEMP = "SELECT timestamp,temperature from leituras LATEST BY sensor_id where sensor_id=?";
-    private final String SQL_FIND_HISTORIC_TEMP = "SELECT timestamp,temperature from leituras WHERE sensor_id=? ORDER by timestamp desc limit 100";
+    private final String SQL_FIND_HISTORIC_TEMP = "SELECT timestamp,temperature from leituras WHERE sensor_id=? and timestamp between ? and ? ORDER by timestamp desc limit 50";
 
     public List<Sensor> getAll() {
         return jdbcTemplate.query(SQL_FIND_ALL, new SensorMapper());
@@ -29,22 +30,26 @@ public class SensorRepositoryImpl implements SensorRepository {
 
     @Override
     public LatestSensorValue currentTemp(Long sensorId) {
-        return jdbcTemplate.queryForObject(SQL_FIND_CURRENT_TEMP, new Object[]{sensorId}, (rs, rowNum) ->
-                new LatestSensorValue(sensorId,
-                        rs.getBigDecimal("temperature").setScale(2 , RoundingMode.HALF_UP),
-                        rs.getTimestamp("timestamp").getTime(),
-                        rs.getTimestamp("timestamp").toLocalDateTime().toString()
-                ));
+        return jdbcTemplate.queryForObject(SQL_FIND_CURRENT_TEMP,
+                new Object[]{sensorId},
+                (rs, rowNum) ->
+                        new LatestSensorValue(sensorId,
+                                rs.getBigDecimal("temperature").setScale(2, RoundingMode.HALF_UP),
+                                rs.getTimestamp("timestamp").getTime(),
+                                rs.getTimestamp("timestamp").toLocalDateTime().toString()
+                        ));
     }
 
     @Override
-    public List<LatestSensorValue> getHistoricTemps(long sensorId) {
-        return jdbcTemplate.query(SQL_FIND_HISTORIC_TEMP, new Object[]{sensorId}, (rs, rowNum) ->
-                new LatestSensorValue(sensorId,
-                        rs.getBigDecimal("temperature").setScale(2 , RoundingMode.HALF_UP),
-                        rs.getTimestamp("timestamp").getTime(),
-                        rs.getTimestamp("timestamp").toLocalDateTime().toString()
-                ));
+    public List<LatestSensorValue> getLeituras(long sensorId, Instant start, Instant end) {
+        return jdbcTemplate.query(SQL_FIND_HISTORIC_TEMP,
+                new Object[]{sensorId, Timestamp.from(start), Timestamp.from(end)},
+                (rs, rowNum) ->
+                        new LatestSensorValue(sensorId,
+                                rs.getBigDecimal("temperature").setScale(2, RoundingMode.HALF_UP),
+                                rs.getTimestamp("timestamp").getTime(),
+                                rs.getTimestamp("timestamp").toLocalDateTime().toString()
+                        ));
     }
 
 }

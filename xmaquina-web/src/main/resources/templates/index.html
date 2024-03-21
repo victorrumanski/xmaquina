@@ -132,19 +132,43 @@
         <!-- Content wrapper -->
         <div class="content-wrapper">
           <!-- Content -->
-
-
           <div class="container-xxl flex-grow-1 container-p-y">
-
+            <div class="mb-3 row">
+              <label for="start-input" class="col-md-1 col-form-label text-end">Historico De: </label>
+              <div class="col-md-3">
+                <input class="form-control" type="datetime-local"
+                       th:value="${#temporals.format(startDate, 'yyyy-MM-dd HH:mm:00')}"
+                       id="start-input">
+              </div>
+              <label for="end-input" class="col-md-1 col-form-label text-end">Ate: </label>
+              <div class="col-md-3">
+                <input class="form-control" type="datetime-local"
+                       th:value="${#temporals.format(endDate, 'yyyy-MM-dd HH:mm:00')}"
+                       id="end-input">
+              </div>
+              <label for="realtime-select" class="col-md-1 col-form-label text-end">RealTime? </label>
+              <div class="col-md-1">
+                <select id="realtime-select" class="form-select">
+                  <option value="true">SIM</option>
+                  <option value="false">NAO</option>
+                </select>
+              </div>
+              <div class="col-md-1">
+                <button class="btn btn-primary" onclick="onAtualizarClicked()">Atualizar</button>
+              </div>
+            </div>
+            <br />
             <!-- CHARTS -->
             <div class="row">
-              <div class="col-lg-3 mb-6 order-0">
-                <h3>Temperatura Atual</h3>
-                <div id="gauge" class="chart-container"></div>
+              <div class="col-lg-3 mb-1 order-0 text-center">
+                <h3>Temperatura Atual </h3>
+                <span id="atual-sensor-title"></span>
+                <div id="gauge" style="height:400px"></div>
               </div>
-              <div class="col-lg-9 col-md-12 order-1">
-                <h3>Historico de Temperaturas</h3>
-                <div id="temps" style="width:100%; height:300px;"></div>
+              <div class="col-lg-9 col-md-12 order-1 text-center">
+                <h3>Historico</h3>
+                <span id="historico-sensor-title"></span>
+                <div id="temps" style="height:400px"></div>
               </div>
             </div>
 
@@ -156,18 +180,18 @@
                     <h5 class="card-title">Sensor <span th:text="${s.id}"></span></h5>
                     <div class="card-text row">
                       <div class="col-lg-6">
-                        <label th:text="${#temporals.format(s.ts,'dd/MM/yyyy hh:mm:ss')}"></label>
+                        <label th:id="'timestamp-sensor-' + ${s.id}" th:text="${#temporals.format(s.date,'dd/MM/yyyy hh:mm:ss')}"></label>
                       </div>
                       <div class="col-lg-6 text-end">
                         <h3 class="card-title mb-2">
-                          <span th:text="${#numbers.formatDecimal(s.leitura,1,2)}"></span> °C
+                          <span th:id="'leitura-sensor-' + ${s.id}" th:text="${#numbers.formatDecimal(s.leitura,1,2)}"></span> °C
                         </h3>
                       </div>
                     </div>
                     <div class="card-text row">
                       <div class="col-lg-8">
-                        <button th:onclick="'javascript: sensorID = ' + ${s.id} + '; initCharts()'"
-                      class="btn btn-primary">Carregar Graficos</button>
+                        <button th:onclick="'javascript: sensorID = ' + ${s.id} + '; onSelectSensor()'"
+                      class="btn btn-primary">Ver Graficos</button>
                       </div>
                         <div class="col-lg-4 text-end">
                           <button
@@ -234,76 +258,100 @@
   <script async defer src="https://buttons.github.io/buttons.js"></script>
 
   <script type="text/javascript">
-
-
-  </script>
-
-  <script type="text/javascript">
-    var realTimeInterval;
     var gaugeChart, lineChart;
-    var sensorID;
+    var sensorID = [[${sensores.get(0)}]]
     var tempsArray = [];
-    initCharts();
+    var sensores = [];
+    var lastGaugeValue = -1
 
-    function initCharts() {
-      clearInterval(realTimeInterval);
-      tempsArray = [];
-      //sensorID = $("#sensorSelect").val();
+    init();
+
+    function init(){
       initGauge();
-      initTemps();
-      loadChartData();
+      initHistoryChart();
+      updateChartTitles(sensorID)
+      setupRealtime();
+      atualizar()
     }
 
-    function loadChartData() {
-      loadInitialTempHistory()
-      setupRealTime()
+    function onSelectSensor(){
+      updateChartTitles(sensorID)
+      atualizar()
     }
 
-    function loadInitialTempHistory() {
-      $.get("/sensores/" + sensorID + "/historic", function (list) {
-        //$.get("/sensores/1/historic", function (data) {
-        list = list.reverse()
-        for (leitura of list) {
-          tempsArray.push({
-            name: new Date(leitura.ts).toISOString(),
-            value: [new Date(leitura.ts).toISOString(), leitura.value]
-          });
-        }
-      },
-        "json"
-      );
+    function onAtualizarClicked(){
+      atualizar();
     }
 
-    function setupRealTime() {
-      realTimeInterval = setInterval(function () {
-        $.get("/sensores/" + sensorID + "/current", function (leitura) {
-          //$.get("/sensores/1/current", function (leitura) {
-          let newGaugeValue = { value: leitura.value.toFixed(1) }
-          gaugeChart.setOption({
-            series: [
-              {
-                data: [newGaugeValue]
-              }
-            ]
-          });
+    function updateGauge(leitura){
+      let value = leitura.leitura.toFixed(1)
+      let newGaugeValue = { value: value }
+      gaugeChart.setOption({
+        series: [
+          {
+            data: [newGaugeValue]
+          }
+        ]
+      });
 
-          let newPoint = {
-            name: new Date(leitura.ts).toISOString(),
-            value: [new Date(leitura.ts).toISOString(), leitura.value]
-          };
-          tempsArray.push(newPoint)
+      //adiciona point no historico pra ter realtime
+      let rt = $("#realtime-select  option:selected").val()
+      if(value!=lastGaugeValue && rt=="true"){
+        lastGaugeValue = value;
+        tempsArray.push({
+          name: new Date(leitura.date+'Z').toISOString(),
+          value: [new Date(leitura.date+'Z'), value]
+        });
+        lineChart.setOption({
+          series: [
+            {
+              data: tempsArray
+            }
+          ]
+        });
+      }
+    }
 
-          lineChart.setOption({
-            series: [
-              {
-                data: tempsArray
-              }
-            ]
-          });
+    function updateSensores(){
+      for(s of sensores) {
+        $("#leitura-sensor-"+s.id).html(s.temp)
+            var date = new Date(s.ts);
+            let printDate =
+              date.getDate() + '/' +
+              (date.getMonth() + 1) + '/' +
+              date.getFullYear() +
+              ' ' +
+              date.getHours() + ':' +
+              date.getMinutes() + ':' +
+              date.getSeconds()
 
+        $("#timestamp-sensor-"+s.id).html(printDate)
+      }
+    }
+
+    function setupRealtime() {
+      setInterval(function() {
+        $.get("/leituras/current", function (list) {
+          sensores = []
+          for(l of list){
+            if(l.id==sensorID){
+              updateGauge(l)
+            }
+            sensores.push({
+              id: l.id,
+              ts: new Date(l.date+'Z'),
+              temp: l.leitura.toFixed(1)
+            })
+          }
+          updateSensores()
         }, "json");
+      }, 3000);
+    }
 
-      }, 2000);
+
+    function updateChartTitles(sensorName){
+      $("#atual-sensor-title").html("Sensor "+sensorName)
+      $("#historico-sensor-title").html("Sensor "+sensorName)
     }
 
     function initGauge() {
@@ -371,7 +419,35 @@
       window.addEventListener('resize', gaugeChart.resize);
     }
 
-    function initTemps() {
+    function atualizar(callback) {
+      let tz = (Intl.DateTimeFormat().resolvedOptions().timeZone)
+      let start = new Date($("#start-input").val()).toISOString().substring(0,19)
+      let end = new Date($("#end-input").val()).toISOString().substring(0,19)
+      $.get("/leituras/" + sensorID + "/leituras"+"?start="+start+"&end="+end//+"&timezone="+tz
+      , function (list) {
+        list = list.reverse()
+        tempsArray = []
+        for (leitura of list) {
+          tempsArray.push({
+            name: new Date(leitura.date+'Z').toISOString(),
+            value: [new Date(leitura.date+'Z'), leitura.value]
+          });
+        }
+        lineChart.setOption({
+          series: [
+            {
+              data: tempsArray
+            }
+          ]
+        });
+
+        //callback();
+      },
+        "json"
+      );
+    }
+
+    function initHistoryChart() {
       var dom = document.getElementById('temps');
       lineChart = echarts.init(dom, null, {
         renderer: 'canvas',
@@ -430,7 +506,7 @@
             areaStyle: {
               normal: {}
             },
-            data: tempsArray
+            data: []//tempsArray
           }
         ]
       };

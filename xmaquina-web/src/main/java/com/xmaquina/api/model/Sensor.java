@@ -6,7 +6,9 @@ import java.time.LocalDateTime;
 public class Sensor implements Comparable {
     public Long id;
     public String name;
-    public LocalDateTime ts;
+    public Long ts;
+    public LocalDateTime date;
+
     public BigDecimal leitura;
 
     @Override
